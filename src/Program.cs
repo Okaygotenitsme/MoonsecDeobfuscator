@@ -1,4 +1,4 @@
-﻿using MoonsecDeobfuscator.Deobfuscation;
+using MoonsecDeobfuscator.Deobfuscation;
 using MoonsecDeobfuscator.Deobfuscation.Bytecode;
 
 namespace MoonsecDeobfuscator;
@@ -35,7 +35,12 @@ public static class Program
 
         if (command == "-dev")
         {
-            var result = new Deobfuscator().Deobfuscate(File.ReadAllText(input));
+            var deobfuscator = new Deobfuscator();
+            var result = deobfuscator.Deobfuscate(File.ReadAllText(input));
+
+            if (deobfuscator.Context.HadAntiTamper)
+                Console.WriteLine("-- [[ ANTI-TAMPER BLOCK DETECTED ]]");
+
             using var stream = new FileStream(output, FileMode.Create, FileAccess.Write);
             using var serializer = new Serializer(stream);
 
@@ -43,8 +48,15 @@ public static class Program
         }
         else if (command == "-dis")
         {
-            var result = new Deobfuscator().Deobfuscate(File.ReadAllText(input));
-            File.WriteAllText(output, new Disassembler(result).Disassemble());
+            var deobfuscator = new Deobfuscator();
+            var result = deobfuscator.Deobfuscate(File.ReadAllText(input));
+
+            var disassembly = new Disassembler(result).Disassemble();
+            var outputText = deobfuscator.Context.HadAntiTamper
+                ? $"-- [[ ANTI-TAMPER BLOCK ]]\n{disassembly}"
+                : disassembly;
+
+            File.WriteAllText(output, outputText);
         }
         else
         {
