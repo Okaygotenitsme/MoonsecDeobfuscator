@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 using MoonsecDeobfuscator.Ast;
 using MoonsecDeobfuscator.Ast.Literals;
 using MoonsecDeobfuscator.Ast.Statements;
@@ -16,6 +16,8 @@ public class Deobfuscator
 {
     private Context _ctx = new();
     private Block _root = null!;
+
+    public Context Context => _ctx;
 
     public Function Deobfuscate(string code, bool antiTamper = false)
     {
@@ -69,7 +71,8 @@ public class Deobfuscator
 
         _ctx = new Context
         {
-            BytecodeString = bytecodeString
+            BytecodeString = bytecodeString,
+            HadAntiTamper = true
         };
 
         return Encoding.UTF8.GetString(StringDecoding.Decode(scriptString, (int) key));
