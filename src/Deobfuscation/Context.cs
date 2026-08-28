@@ -1,4 +1,4 @@
-﻿using MoonsecDeobfuscator.Ast.Expressions;
+using MoonsecDeobfuscator.Ast.Expressions;
 using MoonsecDeobfuscator.Ast.Statements;
 using MoonsecDeobfuscator.Deobfuscation.Bytecode;
 
@@ -17,4 +17,5 @@ public class Context
     public string BytecodeString;
 
     public int BytecodeKey, ConstantKey;
+    public bool HadAntiTamper;
 }
