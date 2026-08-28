@@ -1,0 +1,30 @@
+name: Build
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Build Windows x64
+        run: dotnet publish MoonsecDeobfuscator.csproj -c Release -r win-x64 --self-contained -p:PublishSingleFile=true -o ./out/win-x64
+
+      - name: Build Linux x64
+        run: dotnet publish MoonsecDeobfuscator.csproj -c Release -r linux-x64 --self-contained -p:PublishSingleFile=true -o ./out/linux-x64
+
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            out/win-x64/MoonsecDeobfuscator.exe
+            out/linux-x64/MoonsecDeobfuscator
